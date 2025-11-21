@@ -51,14 +51,15 @@ function fitlife_enqueue_scripts() {
     // Google Fonts - Inter for modern typography
     wp_enqueue_style('google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap', array(), null);
 
-    // Tailwind CSS CDN (v3.4+)
-    wp_enqueue_style('tailwindcss', 'https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css', array(), '3.4.1');
+    // Tailwind CSS Play CDN (JIT compiler) - Perfect for development
+    // Note: For production, consider building Tailwind CSS locally with npm
+    wp_enqueue_script('tailwindcss', 'https://cdn.tailwindcss.com', array(), '3.4.1', false);
 
     // Main stylesheet (for custom CSS on top of Tailwind)
-    wp_enqueue_style('fitlife-style', get_stylesheet_uri(), array('tailwindcss'), FITLIFE_VERSION);
+    wp_enqueue_style('fitlife-style', get_stylesheet_uri(), array(), FITLIFE_VERSION);
 
     // Custom Tailwind extensions and utilities
-    wp_enqueue_style('fitlife-custom', FITLIFE_THEME_URI . '/assets/css/custom.css', array('tailwindcss'), FITLIFE_VERSION);
+    wp_enqueue_style('fitlife-custom', FITLIFE_THEME_URI . '/assets/css/custom.css', array(), FITLIFE_VERSION);
 
     // Vanilla JavaScript (no jQuery dependency for better performance)
     wp_enqueue_script('fitlife-main', FITLIFE_THEME_URI . '/assets/js/main.js', array(), FITLIFE_VERSION, true);
@@ -70,6 +71,67 @@ function fitlife_enqueue_scripts() {
     ));
 }
 add_action('wp_enqueue_scripts', 'fitlife_enqueue_scripts');
+
+/**
+ * Add Tailwind CSS Configuration inline
+ */
+function fitlife_tailwind_config() {
+    ?>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#FF6B35',
+                            50: '#FFE8E0',
+                            100: '#FFD8CC',
+                            200: '#FFB8A3',
+                            300: '#FF987A',
+                            400: '#FF8257',
+                            500: '#FF6B35',
+                            600: '#FF4500',
+                            700: '#CC3700',
+                            800: '#992900',
+                            900: '#661C00',
+                        },
+                        secondary: {
+                            DEFAULT: '#004E89',
+                            50: '#E6F1F7',
+                            100: '#CCE4EF',
+                            200: '#99C9DF',
+                            300: '#66AECF',
+                            400: '#3393BF',
+                            500: '#004E89',
+                            600: '#003E6E',
+                            700: '#002F52',
+                            800: '#001F37',
+                            900: '#00101B',
+                        },
+                        accent: {
+                            DEFAULT: '#1AA7EC',
+                            50: '#E7F6FD',
+                            100: '#CFEDFB',
+                            200: '#9FDBF7',
+                            300: '#6FC9F3',
+                            400: '#3FB7EF',
+                            500: '#1AA7EC',
+                            600: '#1486BD',
+                            700: '#0F648E',
+                            800: '#0A435E',
+                            900: '#05212F',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <?php
+}
+add_action('wp_head', 'fitlife_tailwind_config', 5);
 
 /**
  * Register Custom Post Type: Exercise
