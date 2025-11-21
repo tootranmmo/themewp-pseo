@@ -905,3 +905,31 @@ function fitlife_output_schema_markup() {
     }
 }
 add_action('wp_head', 'fitlife_output_schema_markup', 1);
+
+/**
+ * ========================================================================
+ * GITHUB AUTO-UPDATE FUNCTIONALITY
+ * ========================================================================
+ * Automatic theme updates from GitHub releases
+ */
+
+// Load GitHub Updater class
+require_once FITLIFE_THEME_DIR . '/inc/class-github-updater.php';
+
+/**
+ * Initialize GitHub Updater
+ *
+ * Configure these values for your repository
+ */
+function fitlife_init_github_updater() {
+    // Get settings from options (with defaults)
+    $username = get_option('fitlife_github_username', 'tootranmmo'); // Change to your GitHub username
+    $repository = get_option('fitlife_github_repository', 'themewp-pseo'); // Change to your repository name
+    $access_token = get_option('fitlife_github_token', ''); // Optional: add GitHub personal access token
+
+    // Initialize updater
+    if (class_exists('FitLife_GitHub_Updater')) {
+        new FitLife_GitHub_Updater($username, $repository, $access_token);
+    }
+}
+add_action('after_setup_theme', 'fitlife_init_github_updater');
