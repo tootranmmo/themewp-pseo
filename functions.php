@@ -477,3 +477,431 @@ function fitlife_widgets_init() {
     ));
 }
 add_action('widgets_init', 'fitlife_widgets_init');
+
+/**
+ * ========================================================================
+ * ENTERPRISE-LEVEL SEO: Schema.org Markup (JSON-LD)
+ * ========================================================================
+ * Comprehensive Schema.org implementation for maximum SEO impact
+ */
+
+/**
+ * Get Organization Schema
+ *
+ * @return array Organization schema data
+ */
+function fitlife_get_organization_schema() {
+    $logo = get_theme_mod('custom_logo');
+    $logo_url = $logo ? wp_get_attachment_image_url($logo, 'full') : FITLIFE_THEME_URI . '/assets/images/logo.png';
+
+    return array(
+        '@context' => 'https://schema.org',
+        '@type' => 'Organization',
+        '@id' => home_url('/#organization'),
+        'name' => get_bloginfo('name'),
+        'url' => home_url('/'),
+        'logo' => array(
+            '@type' => 'ImageObject',
+            'url' => $logo_url,
+            'width' => 600,
+            'height' => 60,
+        ),
+        'description' => get_bloginfo('description'),
+        'sameAs' => array(
+            // Add your social media links here
+            // 'https://facebook.com/yourpage',
+            // 'https://twitter.com/yourhandle',
+            // 'https://instagram.com/yourhandle',
+        ),
+        'contactPoint' => array(
+            '@type' => 'ContactPoint',
+            'contactType' => 'customer service',
+            'email' => get_option('admin_email'),
+        ),
+    );
+}
+
+/**
+ * Get WebSite Schema with SearchAction
+ *
+ * @return array WebSite schema data
+ */
+function fitlife_get_website_schema() {
+    return array(
+        '@context' => 'https://schema.org',
+        '@type' => 'WebSite',
+        '@id' => home_url('/#website'),
+        'url' => home_url('/'),
+        'name' => get_bloginfo('name'),
+        'description' => get_bloginfo('description'),
+        'publisher' => array(
+            '@id' => home_url('/#organization'),
+        ),
+        'potentialAction' => array(
+            '@type' => 'SearchAction',
+            'target' => array(
+                '@type' => 'EntryPoint',
+                'urlTemplate' => home_url('/?s={search_term_string}'),
+            ),
+            'query-input' => 'required name=search_term_string',
+        ),
+    );
+}
+
+/**
+ * Get BreadcrumbList Schema
+ *
+ * @return array|null Breadcrumb schema data or null if not applicable
+ */
+function fitlife_get_breadcrumb_schema() {
+    if (is_front_page()) {
+        return null;
+    }
+
+    $items = array();
+    $position = 1;
+
+    // Home
+    $items[] = array(
+        '@type' => 'ListItem',
+        'position' => $position++,
+        'name' => __('Home', 'fitlife-pro'),
+        'item' => home_url('/'),
+    );
+
+    // Archive pages
+    if (is_post_type_archive('exercise')) {
+        $items[] = array(
+            '@type' => 'ListItem',
+            'position' => $position++,
+            'name' => __('Exercises', 'fitlife-pro'),
+            'item' => get_post_type_archive_link('exercise'),
+        );
+    }
+
+    // Taxonomy pages
+    if (is_tax()) {
+        $term = get_queried_object();
+        $items[] = array(
+            '@type' => 'ListItem',
+            'position' => $position++,
+            'name' => __('Exercises', 'fitlife-pro'),
+            'item' => get_post_type_archive_link('exercise'),
+        );
+        $items[] = array(
+            '@type' => 'ListItem',
+            'position' => $position++,
+            'name' => $term->name,
+            'item' => get_term_link($term),
+        );
+    }
+
+    // Single exercise
+    if (is_singular('exercise')) {
+        global $post;
+        $items[] = array(
+            '@type' => 'ListItem',
+            'position' => $position++,
+            'name' => __('Exercises', 'fitlife-pro'),
+            'item' => get_post_type_archive_link('exercise'),
+        );
+        $items[] = array(
+            '@type' => 'ListItem',
+            'position' => $position++,
+            'name' => get_the_title(),
+            'item' => get_permalink(),
+        );
+    }
+
+    // Blog posts
+    if (is_single() && get_post_type() === 'post') {
+        if (get_option('page_for_posts')) {
+            $items[] = array(
+                '@type' => 'ListItem',
+                'position' => $position++,
+                'name' => get_the_title(get_option('page_for_posts')),
+                'item' => get_permalink(get_option('page_for_posts')),
+            );
+        }
+
+        $categories = get_the_category();
+        if (!empty($categories)) {
+            $items[] = array(
+                '@type' => 'ListItem',
+                'position' => $position++,
+                'name' => $categories[0]->name,
+                'item' => get_category_link($categories[0]->term_id),
+            );
+        }
+
+        $items[] = array(
+            '@type' => 'ListItem',
+            'position' => $position++,
+            'name' => get_the_title(),
+            'item' => get_permalink(),
+        );
+    }
+
+    if (count($items) <= 1) {
+        return null;
+    }
+
+    return array(
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => $items,
+    );
+}
+
+/**
+ * Get Exercise/Article Schema for single exercise
+ *
+ * @param int $post_id Post ID
+ * @return array Exercise schema data
+ */
+function fitlife_get_exercise_schema($post_id) {
+    $post = get_post($post_id);
+
+    // Get exercise meta
+    $calories = get_post_meta($post_id, '_exercise_calories', true);
+    $duration = get_post_meta($post_id, '_exercise_duration', true);
+    $sets = get_post_meta($post_id, '_exercise_sets', true);
+    $reps = get_post_meta($post_id, '_exercise_reps', true);
+
+    // Get taxonomies
+    $muscle_groups = get_the_terms($post_id, 'muscle_group');
+    $equipment = get_the_terms($post_id, 'equipment');
+    $difficulty = get_the_terms($post_id, 'difficulty');
+
+    // Get featured image
+    $image_url = get_the_post_thumbnail_url($post_id, 'full');
+    $image_meta = wp_get_attachment_metadata(get_post_thumbnail_id($post_id));
+
+    $schema = array(
+        '@context' => 'https://schema.org',
+        '@type' => 'ExercisePlan',
+        '@id' => get_permalink($post_id) . '#exerciseplan',
+        'name' => get_the_title($post_id),
+        'description' => get_the_excerpt($post_id) ?: wp_trim_words(get_the_content(null, false, $post), 30),
+        'url' => get_permalink($post_id),
+        'datePublished' => get_the_date('c', $post_id),
+        'dateModified' => get_the_modified_date('c', $post_id),
+        'author' => array(
+            '@type' => 'Organization',
+            '@id' => home_url('/#organization'),
+        ),
+        'publisher' => array(
+            '@id' => home_url('/#organization'),
+        ),
+    );
+
+    // Add image
+    if ($image_url && $image_meta) {
+        $schema['image'] = array(
+            '@type' => 'ImageObject',
+            'url' => $image_url,
+            'width' => $image_meta['width'] ?? 1200,
+            'height' => $image_meta['height'] ?? 675,
+        );
+    }
+
+    // Add activity details
+    if ($duration) {
+        $schema['activityDuration'] = 'PT' . $duration . 'M'; // ISO 8601 duration
+    }
+
+    if ($calories) {
+        $schema['estimatedCost'] = array(
+            '@type' => 'MonetaryAmount',
+            'value' => $calories,
+            'currency' => 'CAL', // Calories as "currency"
+        );
+    }
+
+    // Add exercise category
+    if ($difficulty && !is_wp_error($difficulty)) {
+        $schema['activityFrequency'] = $difficulty[0]->name;
+    }
+
+    // Add target muscles
+    if ($muscle_groups && !is_wp_error($muscle_groups)) {
+        $schema['muscleAction'] = wp_list_pluck($muscle_groups, 'name');
+    }
+
+    // Add equipment
+    if ($equipment && !is_wp_error($equipment)) {
+        $schema['exerciseType'] = wp_list_pluck($equipment, 'name');
+    }
+
+    return $schema;
+}
+
+/**
+ * Get HowTo Schema for exercise instructions
+ *
+ * @param int $post_id Post ID
+ * @return array|null HowTo schema data or null if no content
+ */
+function fitlife_get_howto_schema($post_id) {
+    $content = get_post_field('post_content', $post_id);
+
+    if (empty($content)) {
+        return null;
+    }
+
+    // Extract steps from content (looking for ordered lists or numbered items)
+    $steps = array();
+
+    // Try to parse ordered list
+    if (preg_match_all('/<ol>(.*?)<\/ol>/s', $content, $matches)) {
+        if (preg_match_all('/<li>(.*?)<\/li>/s', $matches[1][0], $li_matches)) {
+            foreach ($li_matches[1] as $index => $step_text) {
+                $steps[] = array(
+                    '@type' => 'HowToStep',
+                    'position' => $index + 1,
+                    'name' => 'Step ' . ($index + 1),
+                    'text' => wp_strip_all_tags($step_text),
+                );
+            }
+        }
+    }
+
+    // If no steps found, create generic steps from paragraphs
+    if (empty($steps)) {
+        $paragraphs = explode("\n\n", strip_shortcodes(wp_strip_all_tags($content)));
+        $paragraphs = array_filter(array_map('trim', $paragraphs));
+
+        foreach (array_slice($paragraphs, 0, 5) as $index => $para) {
+            if (strlen($para) > 20) { // Only meaningful paragraphs
+                $steps[] = array(
+                    '@type' => 'HowToStep',
+                    'position' => $index + 1,
+                    'text' => $para,
+                );
+            }
+        }
+    }
+
+    if (empty($steps)) {
+        return null;
+    }
+
+    $duration = get_post_meta($post_id, '_exercise_duration', true);
+    $image_url = get_the_post_thumbnail_url($post_id, 'full');
+
+    $schema = array(
+        '@context' => 'https://schema.org',
+        '@type' => 'HowTo',
+        '@id' => get_permalink($post_id) . '#howto',
+        'name' => __('How to do ', 'fitlife-pro') . get_the_title($post_id),
+        'description' => get_the_excerpt($post_id) ?: wp_trim_words(get_the_content(null, false, get_post($post_id)), 30),
+        'step' => $steps,
+    );
+
+    if ($duration) {
+        $schema['totalTime'] = 'PT' . $duration . 'M';
+    }
+
+    if ($image_url) {
+        $schema['image'] = $image_url;
+    }
+
+    return $schema;
+}
+
+/**
+ * Get CollectionPage Schema for archive pages
+ *
+ * @return array|null CollectionPage schema data or null if not applicable
+ */
+function fitlife_get_collection_schema() {
+    if (!is_post_type_archive('exercise') && !is_tax()) {
+        return null;
+    }
+
+    global $wp_query;
+
+    $schema = array(
+        '@context' => 'https://schema.org',
+        '@type' => 'CollectionPage',
+        'name' => is_tax() ? single_term_title('', false) : __('All Exercises', 'fitlife-pro'),
+        'description' => is_tax() && term_description() ? strip_tags(term_description()) : __('Browse our complete exercise database', 'fitlife-pro'),
+        'url' => is_tax() ? get_term_link(get_queried_object()) : get_post_type_archive_link('exercise'),
+        'numberOfItems' => $wp_query->found_posts,
+        'isPartOf' => array(
+            '@id' => home_url('/#website'),
+        ),
+    );
+
+    // Add main entity
+    if ($wp_query->have_posts()) {
+        $items = array();
+        $posts = $wp_query->posts;
+
+        foreach (array_slice($posts, 0, 10) as $post) { // First 10 items
+            $items[] = array(
+                '@type' => 'ListItem',
+                'url' => get_permalink($post->ID),
+                'name' => get_the_title($post->ID),
+            );
+        }
+
+        if (!empty($items)) {
+            $schema['mainEntity'] = array(
+                '@type' => 'ItemList',
+                'itemListElement' => $items,
+            );
+        }
+    }
+
+    return $schema;
+}
+
+/**
+ * Output Schema.org JSON-LD
+ *
+ * @param array $schema Schema data
+ */
+function fitlife_output_schema($schema) {
+    if (empty($schema)) {
+        return;
+    }
+
+    echo '<script type="application/ld+json">' . "\n";
+    echo wp_json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    echo "\n" . '</script>' . "\n";
+}
+
+/**
+ * Output all applicable Schema.org markup in <head>
+ */
+function fitlife_output_schema_markup() {
+    // Always output Organization and WebSite schemas
+    fitlife_output_schema(fitlife_get_organization_schema());
+    fitlife_output_schema(fitlife_get_website_schema());
+
+    // Breadcrumbs (all pages except homepage)
+    $breadcrumb = fitlife_get_breadcrumb_schema();
+    if ($breadcrumb) {
+        fitlife_output_schema($breadcrumb);
+    }
+
+    // Single Exercise page
+    if (is_singular('exercise')) {
+        global $post;
+        fitlife_output_schema(fitlife_get_exercise_schema($post->ID));
+
+        // HowTo schema for instructions
+        $howto = fitlife_get_howto_schema($post->ID);
+        if ($howto) {
+            fitlife_output_schema($howto);
+        }
+    }
+
+    // Archive/Collection pages
+    $collection = fitlife_get_collection_schema();
+    if ($collection) {
+        fitlife_output_schema($collection);
+    }
+}
+add_action('wp_head', 'fitlife_output_schema_markup', 1);
