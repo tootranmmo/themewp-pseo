@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Theme Constants
-define('FITLIFE_VERSION', '1.0.0');
+define('FITLIFE_VERSION', '2.0.0');
 define('FITLIFE_THEME_DIR', get_template_directory());
 define('FITLIFE_THEME_URI', get_template_directory_uri());
 
@@ -48,19 +48,20 @@ add_action('after_setup_theme', 'fitlife_theme_setup');
  * Enqueue Scripts and Styles
  */
 function fitlife_enqueue_scripts() {
-    // Google Fonts
-    wp_enqueue_style('google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap', array(), null);
+    // Google Fonts - Inter for modern typography
+    wp_enqueue_style('google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap', array(), null);
 
-    // Main stylesheet
-    wp_enqueue_style('fitlife-style', get_stylesheet_uri(), array(), FITLIFE_VERSION);
+    // Tailwind CSS CDN (v3.4+)
+    wp_enqueue_style('tailwindcss', 'https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css', array(), '3.4.1');
 
-    // Homepage styles
-    if (is_front_page()) {
-        wp_enqueue_style('fitlife-homepage', FITLIFE_THEME_URI . '/assets/css/homepage.css', array('fitlife-style'), FITLIFE_VERSION);
-    }
+    // Main stylesheet (for custom CSS on top of Tailwind)
+    wp_enqueue_style('fitlife-style', get_stylesheet_uri(), array('tailwindcss'), FITLIFE_VERSION);
 
-    // Main JavaScript
-    wp_enqueue_script('fitlife-main', FITLIFE_THEME_URI . '/assets/js/main.js', array('jquery'), FITLIFE_VERSION, true);
+    // Custom Tailwind extensions and utilities
+    wp_enqueue_style('fitlife-custom', FITLIFE_THEME_URI . '/assets/css/custom.css', array('tailwindcss'), FITLIFE_VERSION);
+
+    // Vanilla JavaScript (no jQuery dependency for better performance)
+    wp_enqueue_script('fitlife-main', FITLIFE_THEME_URI . '/assets/js/main.js', array(), FITLIFE_VERSION, true);
 
     // Localize script for AJAX
     wp_localize_script('fitlife-main', 'fitlife_ajax', array(

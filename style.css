@@ -3,390 +3,229 @@ Theme Name: FitLife Pro
 Theme URI: https://example.com/fitlife-pro
 Author: FitLife Team
 Author URI: https://example.com
-Description: A comprehensive WordPress theme for fitness and exercise tracking. Features exercise database, muscle groups, equipment categories, and difficulty levels with advanced search capabilities.
-Version: 1.0.0
+Description: A modern WordPress theme for fitness and exercise tracking built with Tailwind CSS. Features exercise database, muscle groups, equipment categories, difficulty levels with advanced search and accessibility features.
+Version: 2.0.0
 Requires at least: 5.8
 Tested up to: 6.4
 Requires PHP: 7.4
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: fitlife-pro
-Tags: fitness, health, exercise, gym, workout, responsive, custom-post-types
+Tags: fitness, health, exercise, gym, workout, responsive, custom-post-types, tailwind-css, accessibility-ready
 */
 
-/* ===========================
-   CSS Reset & Base Styles
-   =========================== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/*
+ * FitLife Pro Theme v2.0
+ * Built with: Tailwind CSS, Vanilla JavaScript, HTML5 Semantic
+ *
+ * Stack:
+ * - Tailwind CSS 3.4+ (via CDN)
+ * - Vanilla JavaScript (No jQuery)
+ * - HTML5 Semantic Elements
+ * - ARIA Attributes for Accessibility
+ * - Modern CSS Custom Properties
+ */
 
-:root {
-    --primary-color: #FF6B35;
-    --secondary-color: #004E89;
-    --accent-color: #1AA7EC;
-    --dark-color: #1A1A2E;
-    --light-color: #F4F4F9;
-    --success-color: #4CAF50;
-    --warning-color: #FFC107;
-    --danger-color: #F44336;
-    --text-primary: #333333;
-    --text-secondary: #666666;
-    --border-color: #E0E0E0;
-    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    --shadow-hover: 0 5px 20px rgba(0, 0, 0, 0.15);
-    --transition: all 0.3s ease;
-    --border-radius: 8px;
+/* ===========================
+   Base Styles & Resets
+   =========================== */
+
+* {
+    box-sizing: border-box;
 }
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--text-primary);
-    background-color: #ffffff;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-img {
+/* WordPress Core Styles */
+.alignnone {
+    margin: 1.5em 1.5em 1.5em 0;
+}
+
+.aligncenter,
+div.aligncenter {
+    display: block;
+    margin: 1.5em auto;
+}
+
+.alignright {
+    float: right;
+    margin: 0.5em 0 1.5em 1.5em;
+}
+
+.alignleft {
+    float: left;
+    margin: 0.5em 1.5em 1.5em 0;
+}
+
+.wp-caption {
     max-width: 100%;
-    height: auto;
+}
+
+.wp-caption-text {
+    text-align: center;
+    margin-top: 0.5em;
+}
+
+.gallery-caption {
     display: block;
 }
 
-a {
-    color: var(--primary-color);
-    text-decoration: none;
-    transition: var(--transition);
-}
-
-a:hover {
-    color: var(--secondary-color);
-}
-
-/* ===========================
-   Typography
-   =========================== */
-h1, h2, h3, h4, h5, h6 {
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 1rem;
-    color: var(--dark-color);
-}
-
-h1 {
-    font-size: 2.5rem;
-}
-
-h2 {
-    font-size: 2rem;
-}
-
-h3 {
-    font-size: 1.75rem;
-}
-
-h4 {
-    font-size: 1.5rem;
-}
-
-h5 {
-    font-size: 1.25rem;
-}
-
-h6 {
-    font-size: 1rem;
-}
-
-p {
-    margin-bottom: 1rem;
-}
-
-/* ===========================
-   Container & Grid
-   =========================== */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.container-fluid {
-    width: 100%;
-    padding: 0 20px;
-}
-
-.section {
-    padding: 60px 0;
-}
-
-.section-title {
-    text-align: center;
-    margin-bottom: 50px;
-}
-
-.section-title h2 {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-    position: relative;
-    display: inline-block;
-}
-
-.section-title h2::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-    border-radius: 2px;
-}
-
-.section-title p {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-/* ===========================
-   Buttons
-   =========================== */
-.btn {
-    display: inline-block;
-    padding: 12px 30px;
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    border: none;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: var(--transition);
-    text-decoration: none;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-    color: white;
-    box-shadow: var(--shadow);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
-    color: white;
-}
-
-.btn-secondary {
-    background-color: var(--secondary-color);
-    color: white;
-}
-
-.btn-secondary:hover {
-    background-color: #003d6e;
-    color: white;
-}
-
-.btn-outline {
-    background-color: transparent;
-    border: 2px solid var(--primary-color);
-    color: var(--primary-color);
-}
-
-.btn-outline:hover {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.btn-lg {
-    padding: 16px 40px;
-    font-size: 18px;
-}
-
-/* ===========================
-   Cards
-   =========================== */
-.card {
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
+/* Screen Reader Text */
+.screen-reader-text {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
     overflow: hidden;
-    transition: var(--transition);
+    padding: 0;
+    position: absolute !important;
+    width: 1px;
+    word-wrap: normal !important;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-hover);
+.screen-reader-text:focus {
+    background-color: #f1f1f1;
+    border-radius: 3px;
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
+    clip: auto !important;
+    clip-path: none;
+    color: #21759b;
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    height: auto;
+    left: 5px;
+    line-height: normal;
+    padding: 15px 23px 14px;
+    text-decoration: none;
+    top: 5px;
+    width: auto;
+    z-index: 100000;
 }
 
-.card-img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
+/* Skip Link */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #000;
+    color: #fff;
+    padding: 8px;
+    z-index: 100000;
 }
 
-.card-body {
-    padding: 20px;
+.skip-link:focus {
+    top: 0;
 }
 
-.card-title {
-    font-size: 1.25rem;
-    margin-bottom: 10px;
-    color: var(--dark-color);
+/* Additional WordPress Compatibility */
+.sticky {
+    /* Sticky post styling */
 }
 
-.card-text {
-    color: var(--text-secondary);
-    margin-bottom: 15px;
+.bypostauthor {
+    /* Post author styling */
 }
 
-/* ===========================
-   Grid System
-   =========================== */
-.grid {
-    display: grid;
-    gap: 30px;
+.entry-content img {
+    max-width: 100%;
+    height: auto;
 }
 
-.grid-2 {
-    grid-template-columns: repeat(2, 1fr);
+/* Gutenberg Editor Support */
+.wp-block-image img {
+    display: block;
 }
 
-.grid-3 {
-    grid-template-columns: repeat(3, 1fr);
+.wp-block-cover {
+    margin-bottom: 1.5em;
 }
 
-.grid-4 {
-    grid-template-columns: repeat(4, 1fr);
-}
-
-.grid-6 {
-    grid-template-columns: repeat(6, 1fr);
-}
-
-/* ===========================
-   Badges & Labels
-   =========================== */
-.badge {
-    display: inline-block;
-    padding: 5px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.badge-beginner {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.badge-intermediate {
-    background-color: #FFC107;
-    color: #333;
-}
-
-.badge-advanced {
-    background-color: #F44336;
-    color: white;
-}
-
-.badge-calories {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-/* ===========================
-   Responsive
-   =========================== */
-@media (max-width: 992px) {
-    .grid-4, .grid-6 {
-        grid-template-columns: repeat(3, 1fr);
+/* Print Optimization */
+@media print {
+    @page {
+        margin: 2cm;
     }
 
-    h1 {
-        font-size: 2rem;
-    }
-
-    h2 {
-        font-size: 1.75rem;
-    }
-}
-
-@media (max-width: 768px) {
-    .grid-2, .grid-3, .grid-4, .grid-6 {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .section {
-        padding: 40px 0;
-    }
-
-    .section-title h2 {
-        font-size: 2rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .grid-2, .grid-3, .grid-4, .grid-6 {
-        grid-template-columns: 1fr;
-    }
-
-    h1 {
-        font-size: 1.75rem;
-    }
-
-    h2 {
-        font-size: 1.5rem;
-    }
-
+    .site-header,
+    .site-footer,
+    .no-print,
+    button,
     .btn {
-        padding: 10px 20px;
-        font-size: 14px;
+        display: none !important;
+    }
+
+    body {
+        font-size: 12pt;
+        line-height: 1.5;
+        color: #000;
+        background: #fff;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+}
+
+/* Accessibility Enhancements */
+:focus {
+    outline: 2px solid #FF6B35;
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    * {
+        border-color: currentColor !important;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }
 
 /* ===========================
-   Utility Classes
+   Custom Utility Classes
+   (Complementing Tailwind)
    =========================== */
-.text-center {
-    text-align: center;
+
+/* These are theme-specific utilities not covered by Tailwind */
+
+.container-custom {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
 }
 
-.text-right {
-    text-align: right;
+@media (min-width: 768px) {
+    .container-custom {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
 }
 
-.text-left {
-    text-align: left;
+@media (min-width: 1024px) {
+    .container-custom {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
 }
-
-.mt-1 { margin-top: 0.5rem; }
-.mt-2 { margin-top: 1rem; }
-.mt-3 { margin-top: 1.5rem; }
-.mt-4 { margin-top: 2rem; }
-.mt-5 { margin-top: 3rem; }
-
-.mb-1 { margin-bottom: 0.5rem; }
-.mb-2 { margin-bottom: 1rem; }
-.mb-3 { margin-bottom: 1.5rem; }
-.mb-4 { margin-bottom: 2rem; }
-.mb-5 { margin-bottom: 3rem; }
-
-.pt-1 { padding-top: 0.5rem; }
-.pt-2 { padding-top: 1rem; }
-.pt-3 { padding-top: 1.5rem; }
-.pt-4 { padding-top: 2rem; }
-.pt-5 { padding-top: 3rem; }
-
-.pb-1 { padding-bottom: 0.5rem; }
-.pb-2 { padding-bottom: 1rem; }
-.pb-3 { padding-bottom: 1.5rem; }
-.pb-4 { padding-bottom: 2rem; }
-.pb-5 { padding-bottom: 3rem; }

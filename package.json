@@ -1,0 +1,42 @@
+{
+  "name": "fitlife-pro-theme",
+  "version": "2.0.0",
+  "description": "Modern WordPress fitness theme built with Tailwind CSS and Vanilla JavaScript",
+  "main": "index.php",
+  "scripts": {
+    "tailwind:build": "tailwindcss -i ./assets/css/tailwind.input.css -o ./assets/css/tailwind.output.css --minify",
+    "tailwind:watch": "tailwindcss -i ./assets/css/tailwind.input.css -o ./assets/css/tailwind.output.css --watch",
+    "build": "npm run tailwind:build",
+    "watch": "npm run tailwind:watch"
+  },
+  "keywords": [
+    "wordpress",
+    "theme",
+    "fitness",
+    "tailwind",
+    "vanilla-javascript",
+    "accessibility",
+    "semantic-html"
+  ],
+  "author": "FitLife Team",
+  "license": "GPL-2.0-or-later",
+  "devDependencies": {
+    "tailwindcss": "^3.4.1",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10",
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.33"
+  },
+  "browserslist": [
+    "defaults",
+    "not IE 11",
+    "maintained node versions"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fitlife/fitlife-pro-theme"
+  },
+  "bugs": {
+    "url": "https://github.com/fitlife/fitlife-pro-theme/issues"
+  }
+}
