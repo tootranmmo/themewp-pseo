@@ -3,215 +3,245 @@
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="profile" href="https://gmpg.org/xfn/11">
     <?php wp_head(); ?>
 </head>
 
-<body <?php body_class(); ?>>
+<body <?php body_class('antialiased'); ?>>
 <?php wp_body_open(); ?>
 
-<header id="masthead" class="site-header">
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar-wrapper">
-                <div class="site-branding">
-                    <?php
-                    if (has_custom_logo()) {
-                        the_custom_logo();
-                    } else {
-                        ?>
-                        <a href="<?php echo esc_url(home_url('/')); ?>" class="site-title">
-                            <span class="logo-icon">💪</span>
-                            <span><?php bloginfo('name'); ?></span>
-                        </a>
-                        <?php
-                    }
-                    ?>
-                </div>
+<!-- Skip to Content Link for Accessibility -->
+<a href="#main" class="skip-link screen-reader-text focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100000] focus:px-6 focus:py-3 focus:bg-gray-900 focus:text-white focus:rounded-lg focus:shadow-lg">
+    <?php _e('Skip to content', 'fitlife-pro'); ?>
+</a>
 
-                <button class="mobile-menu-toggle" aria-label="Toggle Menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
+<!-- Header -->
+<header id="masthead" class="site-header bg-white shadow-soft sticky top-0 z-50 transition-shadow duration-300" role="banner">
+    <nav class="container mx-auto px-4 lg:px-6" role="navigation" aria-label="<?php _e('Main Navigation', 'fitlife-pro'); ?>">
+        <div class="flex items-center justify-between gap-6 py-4">
 
-                <div class="main-navigation">
-                    <?php
-                    wp_nav_menu(array(
-                        'theme_location' => 'primary',
-                        'menu_class' => 'nav-menu',
-                        'container' => false,
-                        'fallback_cb' => 'fitlife_default_menu',
-                    ));
-                    ?>
-                </div>
-
-                <div class="header-actions">
-                    <a href="<?php echo esc_url(home_url('/exercises')); ?>" class="btn btn-primary btn-sm">
-                        <?php _e('Browse Exercises', 'fitlife-pro'); ?>
+            <!-- Site Branding -->
+            <div class="site-branding flex-shrink-0">
+                <?php if (has_custom_logo()) : ?>
+                    <div class="custom-logo-link">
+                        <?php the_custom_logo(); ?>
+                    </div>
+                <?php else : ?>
+                    <a href="<?php echo esc_url(home_url('/')); ?>"
+                       class="site-title flex items-center gap-2 text-2xl font-bold text-gray-900 hover:text-primary-500 transition-colors duration-300 no-underline"
+                       rel="home"
+                       aria-label="<?php bloginfo('name'); ?> - <?php _e('Home', 'fitlife-pro'); ?>">
+                        <span class="logo-icon text-3xl" aria-hidden="true">💪</span>
+                        <span><?php bloginfo('name'); ?></span>
                     </a>
-                </div>
+                <?php endif; ?>
             </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button
+                type="button"
+                class="mobile-menu-toggle lg:hidden flex flex-col gap-1 p-2 bg-transparent border-none cursor-pointer focus:outline-none focus:ring-4 focus:ring-primary-500 focus:ring-opacity-50 rounded transition-all duration-300"
+                data-mobile-toggle
+                aria-expanded="false"
+                aria-controls="primary-menu"
+                aria-label="<?php _e('Toggle mobile menu', 'fitlife-pro'); ?>">
+                <span class="block w-6 h-0.5 bg-gray-900 rounded transition-transform duration-300"></span>
+                <span class="block w-6 h-0.5 bg-gray-900 rounded transition-opacity duration-300"></span>
+                <span class="block w-6 h-0.5 bg-gray-900 rounded transition-transform duration-300"></span>
+            </button>
+
+            <!-- Primary Navigation -->
+            <div
+                id="primary-menu"
+                class="main-navigation hidden lg:flex flex-1 justify-center"
+                data-mobile-menu
+                role="menubar">
+                <?php
+                wp_nav_menu(array(
+                    'theme_location' => 'primary',
+                    'menu_id'        => 'primary-menu-list',
+                    'menu_class'     => 'nav-menu flex flex-col lg:flex-row items-start lg:items-center gap-4 lg:gap-8 list-none m-0 p-0',
+                    'container'      => false,
+                    'fallback_cb'    => 'fitlife_default_menu',
+                    'items_wrap'     => '<ul id="%1$s" class="%2$s" role="menu">%3$s</ul>',
+                    'link_before'    => '<span class="menu-text">',
+                    'link_after'     => '</span>',
+                ));
+                ?>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="header-actions hidden lg:flex flex-shrink-0 gap-3">
+                <a href="<?php echo esc_url(home_url('/exercises')); ?>"
+                   class="inline-flex items-center px-5 py-2 bg-gradient-to-r from-primary-500 to-accent-500 text-white font-semibold text-sm rounded-lg shadow-soft hover:shadow-primary hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500 focus:ring-opacity-50 no-underline"
+                   aria-label="<?php _e('Browse all exercises', 'fitlife-pro'); ?>">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <?php _e('Browse Exercises', 'fitlife-pro'); ?>
+                </a>
+            </div>
+        </div>
+
+        <!-- Mobile Menu (Hidden by default, shown via JavaScript) -->
+        <div
+            class="mobile-menu-panel lg:hidden hidden bg-white border-t border-gray-200 py-4"
+            id="mobile-menu-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-label="<?php _e('Mobile menu', 'fitlife-pro'); ?>">
+            <!-- Menu items are already rendered above, this is just the container for mobile styling -->
         </div>
     </nav>
 </header>
 
+<!-- Main Content Wrapper -->
+<div id="page" class="site min-h-screen flex flex-col">
+
 <style>
-/* Header Styles */
-.site-header {
-    background: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+/* Custom styles for navigation items with Tailwind */
+.nav-menu a {
+    @apply text-gray-700 font-medium py-2 px-0 lg:px-1 block transition-colors duration-300 no-underline;
 }
 
-.navbar {
-    padding: 15px 0;
-}
-
-.navbar-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 30px;
-}
-
-.site-branding {
-    flex-shrink: 0;
-}
-
-.site-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--dark-color);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: var(--transition);
-}
-
-.site-title:hover {
-    color: var(--primary-color);
-}
-
-.logo-icon {
-    font-size: 1.8rem;
-}
-
-.custom-logo-link img {
-    max-height: 50px;
-    width: auto;
-}
-
-.main-navigation {
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-}
-
-.nav-menu {
-    list-style: none;
-    display: flex;
-    gap: 30px;
-    margin: 0;
-    padding: 0;
+.nav-menu a:hover,
+.nav-menu a:focus {
+    @apply text-primary-500;
 }
 
 .nav-menu li {
-    position: relative;
+    @apply relative;
 }
 
-.nav-menu a {
-    color: var(--text-primary);
-    font-weight: 500;
-    padding: 8px 0;
-    display: block;
-    transition: var(--transition);
+.nav-menu .current-menu-item > a,
+.nav-menu .current_page_item > a {
+    @apply text-primary-500 font-semibold;
 }
 
-.nav-menu a:hover {
-    color: var(--primary-color);
+/* Mobile menu active state */
+.main-navigation.active {
+    @apply flex absolute top-full left-0 right-0 bg-white shadow-strong p-6 animate-slide-down;
 }
 
-.header-actions {
-    flex-shrink: 0;
+/* Mobile menu toggle animation */
+.mobile-menu-toggle[aria-expanded="true"] span:first-child {
+    @apply rotate-45 translate-y-1.5;
 }
 
-.btn-sm {
-    padding: 8px 20px;
-    font-size: 14px;
+.mobile-menu-toggle[aria-expanded="true"] span:nth-child(2) {
+    @apply opacity-0;
 }
 
-.mobile-menu-toggle {
-    display: none;
-    flex-direction: column;
-    gap: 4px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
+.mobile-menu-toggle[aria-expanded="true"] span:last-child {
+    @apply -rotate-45 -translate-y-1.5;
 }
 
-.mobile-menu-toggle span {
-    width: 25px;
-    height: 3px;
-    background: var(--dark-color);
-    border-radius: 2px;
-    transition: var(--transition);
+/* Custom logo styling */
+.custom-logo-link img {
+    @apply max-h-12 w-auto;
 }
 
-/* Responsive */
-@media (max-width: 992px) {
-    .main-navigation {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-    }
+/* Sticky header shadow enhancement */
+.site-header.scrolled {
+    @apply shadow-medium;
+}
 
+/* Mobile menu panel */
+@media (max-width: 1023px) {
     .main-navigation.active {
-        display: block;
+        display: flex !important;
     }
 
     .nav-menu {
-        flex-direction: column;
-        gap: 15px;
+        width: 100%;
     }
 
-    .mobile-menu-toggle {
-        display: flex;
+    .nav-menu li {
+        width: 100%;
     }
 
-    .header-actions {
-        display: none;
+    .nav-menu a {
+        @apply py-3 px-4 rounded-lg hover:bg-gray-50;
     }
 }
 
-@media (max-width: 576px) {
-    .navbar {
-        padding: 10px 0;
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .site-header {
+        @apply border-b-2 border-gray-900;
     }
 
-    .site-title {
-        font-size: 1.25rem;
+    .nav-menu a {
+        @apply border border-transparent;
+    }
+
+    .nav-menu a:hover,
+    .nav-menu a:focus {
+        @apply border-gray-900;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .site-header,
+    .nav-menu a,
+    .mobile-menu-toggle span,
+    .header-actions a {
+        @apply transition-none;
+    }
+}
+
+/* Print styles */
+@media print {
+    .site-header {
+        @apply static shadow-none;
+    }
+
+    .mobile-menu-toggle,
+    .header-actions {
+        @apply hidden;
     }
 }
 </style>
 
 <?php
-// Default menu fallback
+/**
+ * Default menu fallback with Tailwind classes
+ */
 function fitlife_default_menu() {
-    echo '<ul class="nav-menu">';
-    echo '<li><a href="' . esc_url(home_url('/')) . '">' . __('Home', 'fitlife-pro') . '</a></li>';
-    echo '<li><a href="' . esc_url(home_url('/exercises')) . '">' . __('Exercises', 'fitlife-pro') . '</a></li>';
-    echo '<li><a href="' . esc_url(home_url('/about')) . '">' . __('About', 'fitlife-pro') . '</a></li>';
-    echo '<li><a href="' . esc_url(home_url('/contact')) . '">' . __('Contact', 'fitlife-pro') . '</a></li>';
+    $menu_items = array(
+        array(
+            'url' => home_url('/'),
+            'title' => __('Home', 'fitlife-pro'),
+            'current' => is_front_page()
+        ),
+        array(
+            'url' => home_url('/exercises'),
+            'title' => __('Exercises', 'fitlife-pro'),
+            'current' => is_post_type_archive('exercise')
+        ),
+        array(
+            'url' => home_url('/about'),
+            'title' => __('About', 'fitlife-pro'),
+            'current' => is_page('about')
+        ),
+        array(
+            'url' => home_url('/contact'),
+            'title' => __('Contact', 'fitlife-pro'),
+            'current' => is_page('contact')
+        ),
+    );
+
+    echo '<ul class="nav-menu flex flex-col lg:flex-row items-start lg:items-center gap-4 lg:gap-8 list-none m-0 p-0" role="menu">';
+
+    foreach ($menu_items as $item) {
+        $current_class = $item['current'] ? ' current-menu-item' : '';
+        echo '<li class="menu-item' . $current_class . '" role="none">';
+        echo '<a href="' . esc_url($item['url']) . '" role="menuitem">' . esc_html($item['title']) . '</a>';
+        echo '</li>';
+    }
+
     echo '</ul>';
 }
 ?>
