@@ -22,6 +22,7 @@
     // DOM Elements Cache
     const DOM = {
         body: document.body,
+        html: document.documentElement,
         header: document.querySelector('.site-header'),
         mobileToggle: document.querySelector('[data-mobile-toggle]'),
         mobileMenu: document.querySelector('[data-mobile-menu]'),
@@ -31,12 +32,14 @@
         filterInputs: document.querySelectorAll('[data-filter]'),
         statsNumbers: document.querySelectorAll('[data-stat]'),
         smoothLinks: document.querySelectorAll('a[href^="#"]'),
+        darkModeToggle: document.getElementById('dark-mode-toggle'),
     };
 
     /**
      * Initialize App
      */
     function init() {
+        initDarkMode(); // Initialize dark mode first
         initMobileMenu();
         initFAQAccordion();
         initExerciseSearch();
@@ -46,6 +49,107 @@
         initStickyHeader();
         initAccessibilityFeatures();
         initClientSideFiltering();
+        initRatingSystem(); // Initialize rating system
+    }
+
+    /**
+     * ========================================================================
+     * DARK MODE
+     * ========================================================================
+     */
+
+    /**
+     * Initialize Dark Mode
+     */
+    function initDarkMode() {
+        if (!DOM.darkModeToggle) return;
+
+        // Check for saved preference in localStorage
+        const savedTheme = localStorage.getItem('fitlife-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        // Apply saved theme or system preference
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            enableDarkMode();
+        } else {
+            disableDarkMode();
+        }
+
+        // Toggle button click handler
+        DOM.darkModeToggle.addEventListener('click', toggleDarkMode);
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('fitlife-theme')) {
+                if (e.matches) {
+                    enableDarkMode();
+                } else {
+                    disableDarkMode();
+                }
+            }
+        });
+    }
+
+    /**
+     * Toggle Dark Mode
+     */
+    function toggleDarkMode() {
+        if (DOM.html.classList.contains('dark')) {
+            disableDarkMode();
+        } else {
+            enableDarkMode();
+        }
+    }
+
+    /**
+     * Enable Dark Mode
+     */
+    function enableDarkMode() {
+        DOM.html.classList.add('dark');
+        localStorage.setItem('fitlife-theme', 'dark');
+
+        // Update aria-label
+        if (DOM.darkModeToggle) {
+            DOM.darkModeToggle.setAttribute('aria-label', 'Switch to light mode');
+            DOM.darkModeToggle.setAttribute('title', 'Switch to light mode');
+        }
+
+        // Announce to screen readers
+        announceToScreenReader('Dark mode enabled');
+    }
+
+    /**
+     * Disable Dark Mode
+     */
+    function disableDarkMode() {
+        DOM.html.classList.remove('dark');
+        localStorage.setItem('fitlife-theme', 'light');
+
+        // Update aria-label
+        if (DOM.darkModeToggle) {
+            DOM.darkModeToggle.setAttribute('aria-label', 'Switch to dark mode');
+            DOM.darkModeToggle.setAttribute('title', 'Switch to dark mode');
+        }
+
+        // Announce to screen readers
+        announceToScreenReader('Light mode enabled');
+    }
+
+    /**
+     * Announce to screen reader (for accessibility)
+     */
+    function announceToScreenReader(message) {
+        const announcement = document.createElement('div');
+        announcement.setAttribute('role', 'status');
+        announcement.setAttribute('aria-live', 'polite');
+        announcement.className = 'sr-only';
+        announcement.textContent = message;
+        document.body.appendChild(announcement);
+
+        // Remove after announcement
+        setTimeout(() => {
+            document.body.removeChild(announcement);
+        }, 1000);
     }
 
     /**
@@ -496,6 +600,174 @@
     window.addEventListener('load', function() {
         document.body.classList.add('loaded');
     });
+
+    /**
+     * ========================================================================
+     * RATING SYSTEM
+     * ========================================================================
+     */
+
+    /**
+     * Initialize Rating System
+     */
+    function initRatingSystem() {
+        const ratingContainers = document.querySelectorAll('.exercise-rating-container');
+
+        ratingContainers.forEach(container => {
+            const postId = container.dataset.postId;
+            const ratingStars = container.querySelectorAll('.rating-star');
+            const ratingMessage = container.querySelector('.rating-message');
+
+            // Hover effect
+            ratingStars.forEach((star, index) => {
+                star.addEventListener('mouseenter', () => {
+                    highlightStars(ratingStars, index + 1);
+                });
+
+                star.addEventListener('mouseleave', () => {
+                    resetStars(ratingStars);
+                });
+
+                // Click to submit rating
+                star.addEventListener('click', () => {
+                    const rating = star.dataset.rating;
+                    submitRating(postId, rating, container, ratingMessage);
+                });
+
+                // Keyboard support
+                star.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        const rating = star.dataset.rating;
+                        submitRating(postId, rating, container, ratingMessage);
+                    }
+                });
+            });
+        });
+    }
+
+    /**
+     * Highlight stars on hover
+     */
+    function highlightStars(stars, count) {
+        stars.forEach((star, index) => {
+            if (index < count) {
+                star.classList.add('text-yellow-400');
+                star.classList.remove('text-gray-300', 'dark:text-gray-600');
+            } else {
+                star.classList.remove('text-yellow-400');
+                star.classList.add('text-gray-300', 'dark:text-gray-600');
+            }
+        });
+    }
+
+    /**
+     * Reset stars to default
+     */
+    function resetStars(stars) {
+        stars.forEach(star => {
+            star.classList.remove('text-yellow-400');
+            star.classList.add('text-gray-300', 'dark:text-gray-600');
+        });
+    }
+
+    /**
+     * Submit rating via AJAX
+     */
+    function submitRating(postId, rating, container, messageElement) {
+        // Show loading state
+        messageElement.textContent = 'Submitting...';
+        messageElement.className = 'rating-message mt-2 text-sm text-gray-600 dark:text-gray-400';
+
+        // AJAX request
+        const formData = new FormData();
+        formData.append('action', 'fitlife_submit_rating');
+        formData.append('post_id', postId);
+        formData.append('rating', rating);
+        formData.append('nonce', fitlife_ajax.nonce);
+
+        fetch(fitlife_ajax.ajax_url, {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update UI
+                updateRatingDisplay(container, data.data);
+
+                // Show success message
+                messageElement.textContent = data.data.message;
+                messageElement.className = 'rating-message mt-2 text-sm text-green-600 dark:text-green-400 font-semibold';
+
+                // Hide rating form after successful submission
+                const ratingForm = container.querySelector('.rating-form');
+                if (ratingForm) {
+                    setTimeout(() => {
+                        ratingForm.style.opacity = '0';
+                        setTimeout(() => {
+                            ratingForm.style.display = 'none';
+                        }, 300);
+                    }, 2000);
+                }
+
+                // Announce to screen reader
+                announceToScreenReader(`Rating submitted successfully. New average: ${data.data.data.average} stars`);
+            } else {
+                // Show error message
+                messageElement.textContent = data.data.message || 'Error submitting rating';
+                messageElement.className = 'rating-message mt-2 text-sm text-red-600 dark:text-red-400';
+
+                // Announce to screen reader
+                announceToScreenReader(`Error: ${data.data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error('Rating submission error:', error);
+            messageElement.textContent = 'Error submitting rating. Please try again.';
+            messageElement.className = 'rating-message mt-2 text-sm text-red-600 dark:text-red-400';
+        });
+    }
+
+    /**
+     * Update rating display with new data
+     */
+    function updateRatingDisplay(container, data) {
+        const ratingDisplay = container.querySelector('.rating-display');
+        if (!ratingDisplay) return;
+
+        const average = data.average;
+        const count = data.count;
+
+        // Update stars
+        const stars = ratingDisplay.querySelectorAll('.stars svg');
+        stars.forEach((star, index) => {
+            if (index < Math.round(average)) {
+                star.classList.add('text-yellow-400');
+                star.classList.remove('text-gray-300', 'dark:text-gray-600');
+            } else {
+                star.classList.remove('text-yellow-400');
+                star.classList.add('text-gray-300', 'dark:text-gray-600');
+            }
+        });
+
+        // Update rating info text
+        const ratingInfo = ratingDisplay.querySelector('.rating-info');
+        if (ratingInfo) {
+            const ratingText = count === 1 ? 'rating' : 'ratings';
+            ratingInfo.innerHTML = `
+                <span class="font-semibold text-gray-900 dark:text-white">${average}</span>
+                <span>(${count} ${ratingText})</span>
+            `;
+        }
+
+        // Update aria-label
+        const starsContainer = ratingDisplay.querySelector('.stars');
+        if (starsContainer) {
+            starsContainer.setAttribute('aria-label', `Average rating: ${average} out of 5`);
+        }
+    }
 
     /**
      * Responsive Handler

@@ -318,7 +318,211 @@ select:focus-visible {
     }
 }
 
-/* Dark Mode Support (if needed in future) */
-@media (prefers-color-scheme: dark) {
-    /* Dark mode styles can be added here */
+/* ===================================================================
+ * DARK MODE STYLES
+ * =================================================================== */
+
+/* Dark Mode CSS Variables */
+.dark {
+    --color-primary: 255, 107, 53;
+    --color-secondary: 102, 126, 234;
+    --color-accent: 26, 167, 236;
+    --color-dark: 17, 24, 39;
+    --color-success: 76, 175, 80;
+    --color-warning: 255, 193, 7;
+    --color-danger: 244, 67, 54;
+}
+
+/* Dark Mode Global Styles */
+.dark body {
+    @apply bg-gray-900 text-gray-100;
+}
+
+/* Dark Mode Header */
+.dark .site-header {
+    @apply bg-gray-800 shadow-xl;
+}
+
+.dark .site-title {
+    @apply text-white;
+}
+
+.dark .mobile-menu-toggle span {
+    @apply bg-gray-100;
+}
+
+/* Dark Mode Navigation */
+.dark .nav-menu a {
+    @apply text-gray-300 hover:text-white;
+}
+
+.dark .nav-menu a:hover,
+.dark .nav-menu a.active {
+    @apply text-white bg-gray-700;
+}
+
+/* Dark Mode Cards */
+.dark .exercise-card,
+.dark .stat-card,
+.dark .category-card,
+.dark .difficulty-card,
+.dark .faq-item {
+    @apply bg-gray-800 shadow-xl;
+}
+
+.dark .exercise-card:hover,
+.dark .stat-card:hover {
+    @apply shadow-2xl;
+}
+
+/* Dark Mode Text */
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+    @apply text-white;
+}
+
+.dark p {
+    @apply text-gray-300;
+}
+
+.dark .text-gray-600 {
+    @apply text-gray-400;
+}
+
+.dark .text-gray-700 {
+    @apply text-gray-300;
+}
+
+.dark .text-gray-900 {
+    @apply text-gray-100;
+}
+
+/* Dark Mode Backgrounds */
+.dark .bg-white {
+    @apply bg-gray-800;
+}
+
+.dark .bg-gray-50 {
+    @apply bg-gray-900;
+}
+
+.dark .bg-gray-100 {
+    @apply bg-gray-800;
+}
+
+.dark .bg-gray-200 {
+    @apply bg-gray-700;
+}
+
+/* Dark Mode Borders */
+.dark .border-gray-200 {
+    @apply border-gray-700;
+}
+
+.dark .border-gray-300 {
+    @apply border-gray-600;
+}
+
+/* Dark Mode Forms */
+.dark input,
+.dark select,
+.dark textarea {
+    @apply bg-gray-800 text-white border-gray-600;
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+    @apply bg-gray-700 border-primary-500 ring-primary-500;
+}
+
+.dark input::placeholder {
+    @apply text-gray-500;
+}
+
+/* Dark Mode FAQ */
+.dark .faq-question {
+    @apply bg-gray-800 text-white;
+}
+
+.dark .faq-question:hover {
+    @apply bg-gray-700;
+}
+
+.dark .faq-question.active {
+    @apply bg-gradient-to-r from-orange-500 to-blue-500 text-white;
+}
+
+.dark .faq-answer p {
+    @apply text-gray-300;
+}
+
+/* Dark Mode Footer */
+.dark .site-footer {
+    @apply bg-gray-800 border-gray-700;
+}
+
+/* Dark Mode Shadows */
+.dark .shadow-soft {
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
+}
+
+.dark .shadow-medium {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.dark .shadow-strong {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* Dark Mode Scrollbar */
+.dark ::-webkit-scrollbar-track {
+    @apply bg-gray-900;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgb(var(--color-primary)), rgb(var(--color-accent)));
+}
+
+/* Dark Mode Category Cards Hover */
+.dark .category-card:hover {
+    background: linear-gradient(135deg, rgb(var(--color-primary)), rgb(var(--color-accent)));
+}
+
+/* Dark Mode Glass Effect */
+.dark .glass {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Dark Mode Pattern Grid */
+.dark .pattern-grid {
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}
+
+/* Dark Mode Mobile Menu */
+.dark .mobile-menu {
+    @apply bg-gray-800 shadow-2xl;
+}
+
+/* Dark Mode Skeleton Loading */
+.dark .skeleton {
+    @apply bg-gray-700;
+}
+
+/* Smooth transition for dark mode */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
